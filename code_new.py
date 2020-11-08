@@ -245,13 +245,13 @@ def cluster():
             print("-----hadoop services-----")
             print("tell your requirements whatever you want please")
             inp1 = input("what you want: ")
-            if inp1 in "namenode" or inp1 in "datanode" or inp1 in "client":
+            if "namenode" in inp1 or "datanode" in inp1 or "client" in inp1:
                 hadoopconf()
     
 
 def hadoopconf():
         inp = input("what do you want tell your requirements:\n")
-        if inp in "configure namenode" or inp in "make a hadoop master":
+        if "configure namenode" in inp or "make a hadoop master" in inp:
             print("---------master node configuration------------")
             ip=input("\nenter machine IP\n")
             
