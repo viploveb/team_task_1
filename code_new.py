@@ -25,8 +25,8 @@ def MENU():
         #lvmconf()
     elif service == 3:
       	awsconf()
-    #elif service == 4:
-        #hadoopconf()
+    elif service == 4:
+        cluster()
     elif service == 5:
         webser_conf()
     elif service == 6:
@@ -228,7 +228,167 @@ def s3conf():
         obj_name = input("Enter object name : ")
         s = sp.getoutput('aws s3 rm s3://{0}/{1}'.format(buck_name,obj_name))
         print(s)
-#def hadoopconf()
+
+def cluster():
+        status = sp.getstatusoutput("rpm -q hadoop")
+        print(status[0])
+        print(status[1])
+        if status[0] != 0 :
+            os.system("yum install python3-pip -y")
+            os.system("pip2 install gdown")
+            os.system("gdown --id 1541gbFeGZZJ5k9Qx65D04lpeNBw87rM5")
+            os.system("gdown --id 17UWQNVdBdGlyualwWX4Cc96KyZhD-lxz") 
+            os.system("rpm -ivh hadoop-1.2.1-1.x86_64.rpm --force")
+            os.system("rpm -ivh jdk-8u171-linux-x64.rpm")
+        else: 
+
+            print("-----hadoop services-----")
+            print("tell your requirements whatever you want please")
+            inp1 = input("what you want: ")
+            if inp1 in "namenode" or inp1 in "datanode" or inp1 in "client":
+                hadoopconf()
+    
+
+def hadoopconf():
+        inp = input("what do you want tell your requirements:\n")
+        if inp in "configure namenode" or inp in "make a hadoop master":
+            print("---------master node configuration------------")
+            ip=input("\nenter machine IP\n")
+            
+            namenode_folder = input("\t\t\tFolder name for namenode:")
+            os.system("rm -rf {}".format(namenode_folder)) 
+            os.system("mkdir {}".format(namenode_folder))
+            namenode_port = input("\t\t\tGive Port Number at which you want to run namenode service:")
+
+            file_hdfs = open("/etc/hadoop/hdfs-site.xml","w")
+            hdfs_data =  '''<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+<configuration>
+<property>
+<name>dfs.name.dir</name>
+<value>{}</value>
+</property>
+</configuration>\n'''.format(namenode_folder)
+            file_hdfs.write(hdfs_data)
+
+            file_core = open("/etc/hadoop/core-site.xml", "w")
+            core_data = '''<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- Put site-specific property overrides in this file. -->
+<configuration>
+<property>
+<name>fs.default.name</name>
+<value>hdfs://{}:{}</value>
+</property>
+</configuration>\n'''.format(ip , namenode_port)
+            file_core.write(core_data)
+            print("now you have setup ready")
+            print("1. format")
+            print("2. start namenode")
+            print("3. show report")
+            command == int(input("enter your choice"))
+            if command == 1:
+                os.system("hadoop namenode -format")
+            elif command == 2: 
+                os.system("hadoop-daemon.sh start namenode")
+            elif command == 3:
+                os.system("hadoop dfsadmin -report")
+
+
+            
+        elif inp  in "configure datanode" or inp in "make a hadoop slave": 
+            print("---------data node configuration------------")
+            datanode_folder = input("\t\t\tFolder name for datanode:")
+            os.system("rm -rf {}".format(datanode_folder))
+            os.system("mkdir {}".format(datanode_folder))
+            namenode_IP = input("\t\t\tEnter namenode IP: ")
+            namenode_port = input("\t\t\tEnter port number of namenode: ")
+            file_hdfs = open("/etc/hadoop/hdfs-site.xml","w")
+            hdfs_data =  '''<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+<configuration>
+<property>
+<name>dfs.data.dir</name>
+<value>{}</value>
+</property>
+</configuration>\n'''.format(datanode_folder)
+            file_hdfs.write(hdfs_data)
+
+            file_core = open("/etc/hadoop/core-site.xml", "w")
+            core_data = '''<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- Put site-specific property overrides in this file. -->
+<configuration>
+<property>
+<name>fs.default.name</name>
+<value>hdfs://{}:{}</value>
+</property>
+</configuration>\n'''.format(namenode_IP,namenode_port)
+            file_core.write(core_data)
+            print("now have datanode setup ready")
+            print("1. start datanode")
+            print("2. show report")
+            command = int(input("select choice"))
+            if command == 1:
+                os.system("hadoop-daemon.sh start datanode")
+            elif command == 2:
+                os.system("hadoop dfsadmin -report")
+
+
+        elif inp in "configure client" or inp in "make a hadoop client":
+            print("---------master node configuration------------")
+            namenode_IP = input("\t\t\tEnter namenode IP: ")
+            namenode_port = input("\t\t\tEnter port number of namenode: ")
+            file_core = open("/etc/hadoop/core-site.xml", "w")
+            core_data = '''<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- Put site-specific property overrides in this file. -->
+<configuration>
+<property>
+<name>fs.default.name</name>
+<value>hdfs://{}:{}</value>
+</property>
+</configuration>\n'''.format(namenode_IP,namenode_port)
+            file_core.write(core_data)
+            print("now you have client setup ready")
+            print("options are :")
+            print("1. add files into cluster")
+            print("2. delete files from cluster")
+            print("3. Listing the file of cluster")
+            print("4. read a file")
+            print("5. change block size ")
+            print("6. change replication factor")
+            print("7. change replication factor and block size both")
+            command = int(input("\nEnter your choice--"))
+            if command == 1:
+                filename = input("enter your file name")
+                os.system("hadoop fs -put {} /".format(filename))
+            elif command == 2:
+                filename = input("enter your file name")
+                os.system("hadoop fs -rm {} /".format(filename))
+            elif command == 3:
+                os.system("hadoop fs -ls /")
+            elif command == 4:
+                filename = input("enter filename which you want to read")
+                os.system("hadoop fs -cat / {}".format(filename))
+            elif command == 5:
+                filename = input("enter your file name")
+                size = input("enter size in bytes")
+                os.system("hadoop fs -Ddfs.block.size = {} -put {} /".format(size , filename))
+            elif command == 6:
+                filename = input("enter filename")
+                factor = int(input("enter your replication factor"))
+                os.system("hadoop fs -setrep -w {} {}".format(factor , filename))
+            elif command == 7:
+                filename = input("enter filename")
+                factor = input("enter factor")
+                size = input("enter block size")
+                os.system("hadoop -fs -setrep -w {} -Ddfs.block.size = {} -put {} /".format(factor , size , filename))
+
 def webser_conf():
     os.system("tput setaf 7")
     print("\t\t\t==============================================")
