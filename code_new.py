@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/python3
 
 import os
 import subprocess as sp
@@ -18,29 +18,32 @@ def MENU():
     print('7. Cal')
     print('8. Open Firefox')
     print('9. Ifconfig')
-    service = int(input('Enter here : '))
-    if service == 1:
+    print('10. Quit the program')
+    service = input('Enter here : ')
+    if service == '1':
         dockerconf()
     #elif service == 2:
         #lvmconf()
-    elif service == 3:
+    elif service == '3':
       	awsconf()
-    elif service == 4:
+    elif service == '4':
         cluster()
-    elif service == 5:
+    elif service == '5':
         webser_conf()
-    elif service == 6:
+    elif service == '6':
         x=sp.getoutput('date')
         print(x)
-    elif service == 7 :
+    elif service == '7' :
         x=sp.getoutput('cal')
         print(x)
-    elif service == 8:
+    elif service == '8':
         x=sp.getoutput('firefox')
         print(x)
-    elif service == 9:
+    elif service == '9':
         x=sp.getoutput('ifconfig')
         print(x)
+    elif service == '10':
+        exit()
     else :
         print('unsupported input')
         
@@ -51,7 +54,7 @@ def dockerconf():
         print('docker is not installed')
         pass
     else :
-        print("-----------DOCKER----------")
+        print("\n---------------DOCKER--------------\n")
         print("1. Docker daemon start/stop/status")
         print("2. Show docker process")
         print("3. Show docker images")
@@ -84,7 +87,7 @@ def dockerconf():
             im = input('image name - ')
             sp.getoutput('docker run -it {} &'.format(im))
         elif command == 7:
-            im = input('image name - ')
+            im = input('OS name - ')
             sp.getoutput('docker stop {}'.format(im))
         elif command == 8:
             im = input('image name - ')
@@ -92,9 +95,17 @@ def dockerconf():
         elif command == 9:
             httpdconf()
         else: print('Error')
-        
+
+def httpdconf():
+    check = sp.getoutput('docker ps --format "{{.Status}} | grep Exited | echo $?')
+    if check == '0' :
+        print('No container is not running, run a container first')
+    else :
+        sp.getoutput('docker exec -it `docker ps --format "{{.Names}}"` yum install httpd')
+        sp.getoutput('docker exec -it `docker ps --format "{{.Names}}"` /usr/sbin/httpd')
+
 def Menussh():
-        print("Enter the ip address of remote host",end=": ")
+        print("\nEnter the ip address of remote host",end=": ")
         ip=input()
         print('Basic Commands-')
         print('1. Date')
@@ -107,16 +118,15 @@ def Menussh():
             sp.getoutput("ssh {} cal".format(ip)) 
         #elif service == 3:
             #sp.getoutput("ssh {} firefox".format(ip))
-
-		else :
+        else :
             print('unsupported input')
 
 #def lvmconf()
 def awsconf():
-        print('--Services--')
-        print('EC2')
-        print('EBS')
-        print('S3 ')
+        print('\n---------------Services--------------\n')
+        print(' EC2')
+        print(' EBS')
+        print(' S3 ')
         aws_ser = input('Enter here : ')
         if aws_ser == 'EC2' or aws_ser == 'ec2' :
         	ec2conf()
@@ -128,7 +138,7 @@ def awsconf():
                 print('unsupported input')
 
 def ec2conf():
-    print("-----------EC2----------")
+    print("\n----------------EC2---------------\n")
     print("1. Create/Delete Key Pair")
     print("2. Create/Delete Security group")
     print("3. EC2 instance start/stop/terminate")
@@ -182,7 +192,7 @@ def ec2conf():
         print('unsupported input')
 
 def ebsconf():
-    print("-----------EBS----------")
+    print("\n--------------EBS-------------\n")
     print("1. Create EBS volume")
     print("2. Attach EBS volume to EC2 instance")
     command = int(input('\nEnter your choice - '))
@@ -201,7 +211,7 @@ def ebsconf():
             
             
 def s3conf():
-    print("-----------S3----------")
+    print("\n--------------S3-------------\n")
     print("1. Create Bucket")
     print("2. List buckets and objects")
     print("3. Create Object")
@@ -393,7 +403,7 @@ def webser_conf():
     os.system("tput setaf 7")
     print("\t\t\t==============================================")
     os.system("tput setaf 2")
-    print("\t\t\t| YOU CAN CONFIGURE WEBSERVER EASILY USING MY TUI |")
+    print("\t\t\t| YOU CAN CONFIGURE WEBSERVER EASILY USING MY CLI |")
     os.system("tput setaf 7")
     print("\t\t\t==============================================")
     print("\t\t\tTo configure webserver following steps are must")
@@ -418,7 +428,7 @@ os.system("clear")
 os.system("tput setaf 7")
 print("\t\t\t==============================================")
 os.system("tput setaf 2")
-print("\t\t\t|Hey Welcome to my TUI that makes life simple|")
+print("\t\t\t|Hey Welcome to my CLI that makes life simple|")
 os.system("tput setaf 7")
 print("\t\t\t==============================================")
 
@@ -440,9 +450,11 @@ while(True):
         Menussh()
     else:
         print('unsupported input\n')
-    x=input('Do you want to exit (y/n) - \n')
-    if x == 'y' or x == 'Y':
-        exit()
-    else:
-        continue
+        
+#''' x=input('Do you want to exit (y/n)-\n')
+    #if x == 'y' or x == 'Y':
+     #   exit()
+    #else:
+     #   continue
+   #'''
 
