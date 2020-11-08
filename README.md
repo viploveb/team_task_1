@@ -1,5 +1,3 @@
-# team_task_1
-
-Kindly add your code in pre-declared functions. Docker integration is almost done, however this code won't work as of now it is just a boilerplate code for everyone's reference.
-Do not share it anywhere
-Happy Coding!😊😊
+# ARTH Team task - 1
+Developed by - Viplove Bansal, Hirendra Kumar, Muskan Agarwaal, Hitesh Rathod
+A python script which automates several use cases realted to remote connection, Docker, AWS, Hadoop and webserver configuration in local as well as in docker container.
